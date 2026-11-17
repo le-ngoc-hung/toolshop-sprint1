@@ -13,6 +13,7 @@ class ProductPage(BasePage):
         if quantity != 1:
             self.quantity.fill(str(quantity))
         self.add_to_cart_button.click()
+        self.toast.wait_for(state="visible")
         return self
 
     def price(self) -> float:

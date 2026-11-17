@@ -9,6 +9,7 @@ from pages.login_page import LoginPage
 
 
 @pytest.mark.smoke
+@pytest.mark.ui
 def test_search_pliers(page):
     """Goal: verify product search.
     Precondition: the Toolshop home page is available.
@@ -21,6 +22,7 @@ def test_search_pliers(page):
 
 
 @pytest.mark.smoke
+@pytest.mark.ui
 def test_add_claw_hammer_quantity_three(page):
     """Goal: verify adding a chosen product quantity.
     Precondition: Claw Hammer is available.
@@ -32,6 +34,7 @@ def test_add_claw_hammer_quantity_three(page):
 
 
 @pytest.mark.smoke
+@pytest.mark.ui
 def test_invalid_login_is_rejected(page):
     """Goal: verify invalid login handling.
     Precondition: the test email does not belong to a real account.
@@ -42,6 +45,7 @@ def test_invalid_login_is_rejected(page):
 
 
 @pytest.mark.smoke
+@pytest.mark.ui
 def test_empty_contact_form_shows_required_errors(page):
     """Goal: verify required validation on the contact form.
     Precondition: the contact page is available.
