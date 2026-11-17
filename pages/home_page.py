@@ -24,7 +24,8 @@ class HomePage(BasePage):
         self.sort_select = page.get_by_test_id("sort")
         self.sorting_completed = page.get_by_test_id("sorting_completed")
         self.product_prices = page.get_by_test_id("product-price")
-        # TODO B2/B4 (later): price_slider_max = page.get_by_role("slider").nth(1)
+        self.price_slider_max = page.get_by_role("slider").nth(1)
+        self.footer_github = page.get_by_test_id("footer-learn-github")
 
     def open(self):
         """Return only after the first product list has arrived.
@@ -44,6 +45,11 @@ class HomePage(BasePage):
     def sort_by(self, value: str):
         """value: name,asc | name,desc | price,asc | price,desc"""
         self.sort_select.select_option(value)
+        return self
+
+    def filter_by_category(self, category: str):
+        with self.page.expect_response(lambda response: PRODUCT_LIST.search(response.url) is not None):
+            self.page.get_by_label(category, exact=True).check()
         return self
 
     def product_card(self, name: str):
