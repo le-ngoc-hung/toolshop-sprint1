@@ -1,3 +1,5 @@
+import re
+
 from pages.base_page import BasePage
 
 
@@ -19,6 +21,12 @@ class CartPage(BasePage):
 
     def line_totals(self) -> list[float]:
         return [money(t) for t in self.line_prices.all_inner_texts()]
+
+    def product_title(self, name: str):
+        return self.product_titles.filter(has_text=re.compile(rf"^\s*{re.escape(name)}\s*$")).first
+
+    def line_total(self) -> float:
+        return money(self.line_prices.first.inner_text())
 
     def total_value(self) -> float:
         return money(self.total.inner_text())

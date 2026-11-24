@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  BASE_URL: http://localhost:4200
+  API_URL: http://localhost:8091
+  ROUTE_PREFIX: ""
+  GITHUB_API_URL: https://api.github.com
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test:
+    name: test (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browser
+        run: playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Start Toolshop
+        run: bash toolshop/start.sh
+
+      - name: Check Toolshop health
+        run: |
+          curl --fail --retry 10 --retry-delay 2 http://localhost:8091/status
+          curl --fail --retry 10 --retry-delay 2 http://localhost:4200
+
+      - name: Run full test suite
+        run: >
+          pytest
+          --browser ${{ matrix.browser }}
+          -n 2
+          --reruns 1
+          --tracing retain-on-failure
+          --screenshot only-on-failure
+          --html=report.html
+          --self-contained-html
+
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ matrix.browser }}
+          path: |
+            report.html
+            test-results/
+          retention-days: 7
