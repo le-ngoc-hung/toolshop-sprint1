@@ -28,5 +28,9 @@ class CartPage(BasePage):
     def line_total(self) -> float:
         return money(self.line_prices.first.inner_text())
 
+    def quantity_value(self) -> int:
+        quantity = self.quantities.first
+        return int(quantity.input_value() if quantity.input_value() else quantity.inner_text())
+
     def total_value(self) -> float:
         return money(self.total.inner_text())

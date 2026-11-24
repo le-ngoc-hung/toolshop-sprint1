@@ -43,7 +43,7 @@ def cart_contains_product(cart: CartPage, product):
 
 @then("the line price equals the unit price times quantity")
 def line_price_equals_unit_price_times_quantity(cart, unit_price):
-    quantity = int(cart.quantities.first.inner_text())
+    quantity = cart.quantity_value()
     assert cart.line_total() == pytest.approx(unit_price * quantity)
 
 
